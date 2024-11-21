@@ -19,7 +19,9 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   void _mapGetProductsEventToState(
       GetProducts event, Emitter<ProductState> emit) async {
     emit(state.copyWith(status: ProductStatus.loadingItem));
-    final Items products = await ProductService.getProducts();
+    Items products;
+    // = await ProductService.getProducts();
+    products = Items(items: [Item(id: 0, name: 'cake',price: 100, amount: 0), Item(id: 1, name: 'milk',price: 200, amount: 0), Item(id: 0, name: 'cola', price: 50, amount: 0)]);
     emit(state.copyWith(
       status: ProductStatus.loadedItem,
       items: products,
@@ -29,7 +31,10 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   void _mapGetRecommendEventToState(
       GetRecommendProducts event, Emitter<ProductState> emit) async {
     emit(state.copyWith(status: ProductStatus.loadingRecommend));
-    final List<Item> products = await ProductService.getRecommend();
+    Items products;
+    // await ProductService.getRecommend();
+
+    products = Items(items: [Item(id: 0, name: 'cake',price: 100, amount: 0), Item(id: 1, name: 'milk',price: 200, amount: 0), Item(id: 0, name: 'cola', price: 50, amount: 0)]);
     emit(state.copyWith(
       status: ProductStatus.loadedRecommend,
       recommendItems: products,
@@ -38,10 +43,10 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
 
   void _mapAdjustAmountEventToState(
       AdjustAmount event, Emitter<ProductState> emit) async {
-    List<Item> selectList = List.from(state.selectedItem ?? []);
+    List<Item> selectList = state.selectedItem ?? [];
 
     bool containsItem = selectList
-        .any((i) => i.name == event.item.name && i.price == event.item.price);
+        .any((i) => i.id == event.item.id);
 
     double totalPrice = 0;
     double subTotal = 0;

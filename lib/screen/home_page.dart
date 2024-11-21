@@ -18,20 +18,13 @@ class FirstView extends StatefulWidget {
 }
 
 class _FirstViewState extends State<FirstView>
-    with SingleTickerProviderStateMixin {
-  late TabController tabController;
+{
   final formatter = NumberFormat('#,##0.00');
 
   @override
   void initState() {
     context.read<ProductBloc>().add(GetRecommendProducts());
     context.read<ProductBloc>().add(GetProducts());
-    tabController = TabController(length: 2, vsync: this);
-    tabController.addListener(() {
-      if (tabController.indexIsChanging) {
-        setState(() {});
-      }
-    });
     super.initState();
   }
 
@@ -59,232 +52,197 @@ class _FirstViewState extends State<FirstView>
       builder: (context, state) {
         return SafeArea(
           child: Scaffold(
-            backgroundColor: ColorTheme.surface,
-            body: TabBarView(
-              physics: const NeverScrollableScrollPhysics(),
-              controller: tabController,
-              children: [
-                const LandingPage(),
-                Scaffold(
-                  appBar: AppBar(
-                    leading: GestureDetector(
-                      onTap: () {
-                        // go back to product list page
-                        tabController.animateTo(0);
-                      },
-                      child: Icon(
-                        Icons.arrow_back,
-                      ),
-                    ),
-                    title: Text(
-                      'Cart',
-                      style: FontTheme.titleLarge,
-                    ),
-                  ),
-                  body: state.isFail == false &&
-                          state.status == ProductStatus.loadedCheckout
-                      ?
-                      // check out success
-                      Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Success!',
-                                style: FontTheme.titleLarge
-                                    .copyWith(color: ColorTheme.primary),
-                              ),
-                              SizedBox(
-                                height: 1.h,
-                              ),
-                              Text(
-                                'Thank you for shopping with us!',
-                                style: FontTheme.titleSmall,
-                              ),
-                              SizedBox(
-                                height: 1.h,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  tabController.animateTo(0);
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
-                                  decoration: BoxDecoration(
-                                    color: ColorTheme.primary,
-                                    borderRadius: BorderRadius.circular(100),
-                                  ),
-                                  child: Text(
-                                    'Shop again',
-                                    style: FontTheme.labelLarge
-                                        .copyWith(color: ColorTheme.onPrimary),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : state.selectedItem == null ||
-                              state.selectedItem?.length == 0
-                          ?
-                          // empty cart
-                          Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Empty cart',
-                                    style: FontTheme.titleLarge,
-                                  ),
-                                  SizedBox(
-                                    height: 1.h,
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      tabController.animateTo(0);
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 8),
-                                      decoration: BoxDecoration(
-                                        color: ColorTheme.primary,
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                      ),
-                                      child: Text(
-                                        'Go to shopping',
-                                        style: FontTheme.labelLarge.copyWith(
-                                            color: ColorTheme.onPrimary),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          : ListView.builder(
-                              itemCount: state.selectedItem?.length ?? 0,
-                              itemBuilder: (context, index) {
-                                final item = state.selectedItem?[index];
-                                final selectedItem =
-                                    state.selectedItem?.firstWhere(
-                                  (selected) => selected.id == item?.id,
-                                  orElse: () =>
-                                      Item(id: 0, name: '', amount: 0),
-                                );
+              backgroundColor: ColorTheme.surface,
+              body:
+                  const LandingPage(),
+                  // Scaffold(
+                  //   appBar: AppBar(
+                  //     leading: GestureDetector(
+                  //       onTap: () {
+                  //       },
+                  //       child: Icon(
+                  //         Icons.arrow_back,
+                  //       ),
+                  //     ),
+                  //     title: Text(
+                  //       'Cart',
+                  //       style: FontTheme.titleLarge,
+                  //     ),
+                  //   ),
+                  //   body: state.isFail == false &&
+                  //           state.status == ProductStatus.loadedCheckout
+                  //       ?
+                  //       // check out success
+                  //       Center(
+                  //           child: Column(
+                  //             mainAxisAlignment: MainAxisAlignment.center,
+                  //             children: [
+                  //               Text(
+                  //                 'Success!',
+                  //                 style: FontTheme.titleLarge
+                  //                     .copyWith(color: ColorTheme.primary),
+                  //               ),
+                  //               SizedBox(
+                  //                 height: 1.h,
+                  //               ),
+                  //               Text(
+                  //                 'Thank you for shopping with us!',
+                  //                 style: FontTheme.titleSmall,
+                  //               ),
+                  //               SizedBox(
+                  //                 height: 1.h,
+                  //               ),
+                  //               GestureDetector(
+                  //                 onTap: () {
+                  //                 },
+                  //                 child: Container(
+                  //                   padding: EdgeInsets.symmetric(
+                  //                       horizontal: 16, vertical: 8),
+                  //                   decoration: BoxDecoration(
+                  //                     color: ColorTheme.primary,
+                  //                     borderRadius: BorderRadius.circular(100),
+                  //                   ),
+                  //                   child: Text(
+                  //                     'Shop again',
+                  //                     style: FontTheme.labelLarge.copyWith(
+                  //                         color: ColorTheme.onPrimary),
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //             ],
+                  //           ),
+                  //         )
+                  //       : state.selectedItem == null ||
+                  //               state.selectedItem?.length == 0
+                  //           ?
+                  //           // empty cart
+                  //           Center(
+                  //               child: Column(
+                  //                 mainAxisAlignment: MainAxisAlignment.center,
+                  //                 children: [
+                  //                   Text(
+                  //                     'Empty cart',
+                  //                     style: FontTheme.titleLarge,
+                  //                   ),
+                  //                   SizedBox(
+                  //                     height: 1.h,
+                  //                   ),
+                  //                   GestureDetector(
+                  //                     onTap: () {
+                  //                       tabController.animateTo(0);
+                  //                     },
+                  //                     child: Container(
+                  //                       padding: EdgeInsets.symmetric(
+                  //                           horizontal: 16, vertical: 8),
+                  //                       decoration: BoxDecoration(
+                  //                         color: ColorTheme.primary,
+                  //                         borderRadius:
+                  //                             BorderRadius.circular(100),
+                  //                       ),
+                  //                       child: Text(
+                  //                         'Go to shopping',
+                  //                         style: FontTheme.labelLarge.copyWith(
+                  //                             color: ColorTheme.onPrimary),
+                  //                       ),
+                  //                     ),
+                  //                   ),
+                  //                 ],
+                  //               ),
+                  //             )
+                  //           : ListView.builder(
+                  //               itemCount: state.selectedItem?.length ?? 0,
+                  //               itemBuilder: (context, index) {
+                  //                 final item = state.selectedItem?[index];
+                  //                 final selectedItem =
+                  //                     state.selectedItem?.firstWhere(
+                  //                   (selected) => selected.id == item?.id,
+                  //                   orElse: () =>
+                  //                       Item(id: 0, name: '', amount: 0),
+                  //                 );
+                  //
+                  //                 return itemTile(
+                  //                   isDismissible: true,
+                  //                   item: item,
+                  //                   amount: selectedItem?.amount ?? 0,
+                  //                 );
+                  //               },
+                  //             ),
+                  // )
+              // bottomNavigationBar:
 
-                                return itemTile(
-                                  isDismissible: true,
-                                  item: item,
-                                  amount: selectedItem?.amount ?? 0,
-                                );
-                              },
-                            ),
-                ),
-              ],
-            ),
-            bottomNavigationBar: tabController.index == 0
-                ? Container(
-                    height: 10.h,
-                    color: ColorTheme.surfaceContainer,
-                    child: TabBar(
-                      indicator: const BoxDecoration(),
-                      controller: tabController,
-                      tabs: [
-                        Tab(
-                          icon: SvgPicture.asset(
-                            isSelectedTab(0, tabController.index),
-                          ),
-                          text: 'Shopping',
-                        ),
-                        Tab(
-                          icon: SvgPicture.asset(
-                            isSelectedTab(1, tabController.index),
-                          ),
-                          text: 'Cart',
-                        ),
-                      ],
-                    ),
-                  )
-                : state.selectedItem == null ||
-                        state.selectedItem?.length == 0 ||
-                        state.isFail == false &&
-                            state.status == ProductStatus.loadedCheckout
-                    ? null
-                    :
-                    // show price summary
-                    Container(
-                        color: Color(0xffe8def8),
-                        padding:
-                            EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                        height: 20.h,
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Subtotal',
-                                  style: FontTheme.titleMedium
-                                      .copyWith(color: ColorTheme.primary),
-                                ),
-                                Text(
-                                  '${formatter.format(state.subtotal ?? 0)}',
-                                  style: FontTheme.titleMedium
-                                      .copyWith(color: ColorTheme.primary),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Promotion discount',
-                                  style: FontTheme.titleMedium
-                                      .copyWith(color: ColorTheme.primary),
-                                ),
-                                Text(
-                                  '-${formatter.format(state.discount ?? 0)}',
-                                  style: FontTheme.titleMedium.copyWith(
-                                    color: Color(0xffb3261e),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                    '${formatter.format(state.totalPrice ?? 0)}',
-                                    style: FontTheme.headlineLarge
-                                        .copyWith(color: ColorTheme.primary)),
-                                GestureDetector(
-                                  onTap: () {
-                                    context
-                                        .read<ProductBloc>()
-                                        .add(CheckoutEvent());
-                                  },
-                                  child: Container(
-                                    width: 40.w,
-                                    padding: EdgeInsets.symmetric(vertical: 8),
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(100),
-                                      color: ColorTheme.primary,
-                                    ),
-                                    child: Text(
-                                      'Check out',
-                                      style: FontTheme.labelLarge.copyWith(
-                                          color: ColorTheme.onPrimary),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-          ),
+              // show price summary
+              // Container(
+              //     color: Color(0xffe8def8),
+              //     padding:
+              //         EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              //     height: 20.h,
+              //     child: Column(
+              //       children: [
+              //         Row(
+              //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //           children: [
+              //             Text(
+              //               'Subtotal',
+              //               style: FontTheme.titleMedium
+              //                   .copyWith(color: ColorTheme.primary),
+              //             ),
+              //             Text(
+              //               '${formatter.format(state.subtotal ?? 0)}',
+              //               style: FontTheme.titleMedium
+              //                   .copyWith(color: ColorTheme.primary),
+              //             ),
+              //           ],
+              //         ),
+              //         Row(
+              //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //           children: [
+              //             Text(
+              //               'Promotion discount',
+              //               style: FontTheme.titleMedium
+              //                   .copyWith(color: ColorTheme.primary),
+              //             ),
+              //             Text(
+              //               '-${formatter.format(state.discount ?? 0)}',
+              //               style: FontTheme.titleMedium.copyWith(
+              //                 color: Color(0xffb3261e),
+              //               ),
+              //             ),
+              //           ],
+              //         ),
+              //         Row(
+              //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //           children: [
+              //             Text(
+              //                 '${formatter.format(state.totalPrice ?? 0)}',
+              //                 style: FontTheme.headlineLarge
+              //                     .copyWith(color: ColorTheme.primary)),
+              //             GestureDetector(
+              //               onTap: () {
+              //                 context
+              //                     .read<ProductBloc>()
+              //                     .add(CheckoutEvent());
+              //               },
+              //               child: Container(
+              //                 width: 40.w,
+              //                 padding: EdgeInsets.symmetric(vertical: 8),
+              //                 alignment: Alignment.center,
+              //                 decoration: BoxDecoration(
+              //                   borderRadius: BorderRadius.circular(100),
+              //                   color: ColorTheme.primary,
+              //                 ),
+              //                 child: Text(
+              //                   'Check out',
+              //                   style: FontTheme.labelLarge.copyWith(
+              //                       color: ColorTheme.onPrimary),
+              //                 ),
+              //               ),
+              //             ),
+              //           ],
+              //         )
+              //       ],
+              //     ),
+              //   ),
+              ),
         );
       },
     );

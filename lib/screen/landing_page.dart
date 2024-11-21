@@ -19,6 +19,11 @@ class LandingPage extends StatefulWidget {
 class _LandingPageState extends State<LandingPage> {
   final formatter = NumberFormat('#,##0.00');
   @override
+  void initState() {
+    context.read<ProductBloc>().add(GetProducts());
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<ProductBloc, ProductState>(builder: (context, state) {
       return Scaffold(
@@ -142,7 +147,7 @@ class _LandingPageState extends State<LandingPage> {
                 height: 3.h,
               ),
               Text(
-                'Quick pick ~',
+                'Quick pick ${state.items?.items?.length}',
                 style: FontTheme.titleLarge,
               ),
               SizedBox(
@@ -215,19 +220,9 @@ class _LandingPageState extends State<LandingPage> {
           color: ColorTheme.onPrimaryContainer,
         ),
       ),
-      subtitle: item == null
-          ? Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
-              child: Container(
-                width: 250,
-                height: 10,
-                color: Colors.white,
-              ),
-            )
-          : RichText(
+      subtitle: RichText(
               text: TextSpan(
-                text: formatter.format(item.price ?? 0),
+                text: formatter.format(item?.price ?? 0),
                 style: FontTheme.titleLarge.copyWith(
                   color: ColorTheme.onPrimaryContainer,
                 ),

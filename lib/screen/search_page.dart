@@ -32,20 +32,14 @@ class _SearchPageState extends State<SearchPage> {
     super.dispose();
   }
 
-  // Filter function for the search bar
   void _filterItems() {
     String query = _searchController.text.toLowerCase();
-    // BlocProvider.of<ProductBloc>(context).add(FilterItems(query: query));
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ProductBloc, ProductState>(builder: (context, state) {
-      // Get filtered and sorted items
       final items = state.items ?? [];
-      items
-          .sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
-
       return SafeArea(
         child: Scaffold(
           backgroundColor: ColorTheme.surface,
@@ -74,7 +68,9 @@ class _SearchPageState extends State<SearchPage> {
                           SizedBox(
                             width: 3.w,
                           ),
-                          Expanded(
+                          Container(
+                            width: 100.w,
+                            height: 10.h,
                             child: TextField(
                               controller: _searchController,
                               decoration: InputDecoration(
@@ -94,15 +90,15 @@ class _SearchPageState extends State<SearchPage> {
                     ],
                   ),
                 ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      final item = items[index];
-                      return _buildItemTile(item: item);
-                    },
-                  ),
-                ),
+                // Expanded(
+                //   child: ListView.builder(
+                //     itemCount: items.length,
+                //     itemBuilder: (context, index) {
+                //       final item = items[index];
+                //       return _buildItemTile(item: item);
+                //     },
+                //   ),
+                // ),
               ],
             ),
           ),
