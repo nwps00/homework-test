@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:market_app/bloc/product_bloc.dart';
 import 'package:market_app/model/items_model.dart';
+import 'package:market_app/screen/landing_page.dart';
 import 'package:market_app/style/color_theme.dart';
 import 'package:market_app/style/font_theme.dart';
 import 'package:shimmer/shimmer.dart';
@@ -63,109 +64,7 @@ class _FirstViewState extends State<FirstView>
               physics: const NeverScrollableScrollPhysics(),
               controller: tabController,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Text(
-                        'Recommend Product',
-                        style: FontTheme.titleLarge,
-                      ),
-                    ),
-                    Container(
-                      height: 30.h,
-                      width: double.infinity,
-                      alignment: Alignment.center,
-                      child: state.status == ProductStatus.loadingRecommend
-                          ? _buildShimmerList()
-                          : state.recommendItems?.isEmpty ?? true
-                              ?
-                              // no data for recommend products
-                              Column(
-                                  children: [
-                                    const Icon(
-                                      Icons.highlight_off_rounded,
-                                      color: ColorTheme.error,
-                                      size: 50,
-                                    ),
-                                    Text(
-                                      'Something went wrong',
-                                      style: FontTheme.titleLarge,
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        context
-                                            .read<ProductBloc>()
-                                            .add(GetRecommendProducts());
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 10, horizontal: 24),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(100),
-                                          color: ColorTheme.primary,
-                                        ),
-                                        child: Text(
-                                          'Refresh',
-                                          style: FontTheme.titleMedium.copyWith(
-                                              color: ColorTheme.onPrimary),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              : ListView.builder(
-                                  itemCount: state.recommendItems?.length ?? 0,
-                                  itemBuilder: (context, index) {
-                                    final item = state.recommendItems?[index];
-                                    // check which item is selected
-                                    final selectedItem =
-                                        state.selectedItem?.firstWhere(
-                                      (selected) =>
-                                          (selected.name == item?.name &&
-                                              selected.price == item?.price),
-                                      orElse: () =>
-                                          Item(id: 0, name: '', amount: 0),
-                                    );
-                                    return itemTile(
-                                      item: item,
-                                      amount: selectedItem?.amount ?? 0,
-                                    );
-                                  },
-                                ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Text(
-                        'Latest Products',
-                        style: FontTheme.titleLarge,
-                      ),
-                    ),
-                    Expanded(
-                      child: state.status == ProductStatus.loadingItem
-                          ? _buildShimmerList()
-                          : ListView.builder(
-                              itemCount: state.items?.items?.length ?? 0,
-                              itemBuilder: (context, index) {
-                                final item = state.items?.items?[index];
-                                final selectedItem =
-                                    state.selectedItem?.firstWhere(
-                                  (selected) => (selected.name == item?.name &&
-                                      selected.price == item?.price),
-                                  orElse: () =>
-                                      Item(id: 0, name: '', amount: 0),
-                                );
-                                return itemTile(
-                                  item: item,
-                                  amount: selectedItem?.amount ?? 0,
-                                );
-                              },
-                            ),
-                    ),
-                  ],
-                ),
+                const LandingPage(),
                 Scaffold(
                   appBar: AppBar(
                     leading: GestureDetector(
@@ -590,7 +489,8 @@ class _FirstViewState extends State<FirstView>
                   color: ColorTheme.primary,
                   borderRadius: BorderRadius.circular(100),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                 child: Text(
                   'Add to cart',
                   style: FontTheme.labelLarge

@@ -13,7 +13,8 @@ class ProductService {
     var getUri = Uri.http(base, productPath);
     var response = await http.get(getUri);
     var decode = jsonDecode(response.body);
-    Items res = Items.fromJson(decode);
+    Items res = Items(items: [Item(id: 0, name: 'cake', price: 200)]);
+    // Items res = Items.fromJson(decode);
     return res;
   }
 
